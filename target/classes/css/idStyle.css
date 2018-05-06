@@ -1,0 +1,10 @@
+#containerEscuelas{
+	display: block;
+	overflow: hidden;
+	padding: 50px;
+}
+#nombreApp{
+	font-size: 5em;
+	text-align: center;
+	margin: 0.2em 0;
+}

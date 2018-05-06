@@ -1,0 +1,21 @@
+.logo-intitu{
+	max-width: 10%;
+}
+.izquierda{
+	float: left;
+}
+.derecha{
+	float: right;
+}
+#nombreInstitu{
+	text-align: center;
+	display: inline-block;
+	margin: 0 auto;
+	position: relative;
+	width: 80%;
+}
+#contenedorHeader{
+	overflow: hidden;
+	display: block;
+	width: 100%;
+}
