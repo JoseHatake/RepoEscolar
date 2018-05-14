@@ -21,12 +21,12 @@ public class Archivo implements Serializable {
 	//bi-directional many-to-one association to Materias_has_Profesor
 	@ManyToOne
 	@JoinColumns({
-		@JoinColumn(name="FKAcademias", referencedColumnName="FKAcademias"),
-		@JoinColumn(name="FKAdministrativo", referencedColumnName="FKAdministrativo"),
-		@JoinColumn(name="FKEscuela", referencedColumnName="FKEscuela"),
-		@JoinColumn(name="FKJefeAcademia", referencedColumnName="FKJefeAcademia"),
-		@JoinColumn(name="FKMaterias", referencedColumnName="FKMaterias"),
-		@JoinColumn(name="FKProfesor", referencedColumnName="FKProfesor")
+		@JoinColumn(name="FKAcademias", referencedColumnName="FKAcademias", insertable = false,updatable = false),
+		@JoinColumn(name="FKAdministrativo", referencedColumnName="FKAdministrativo", insertable = false,updatable = false),
+		@JoinColumn(name="FKEscuela", referencedColumnName="FKEscuela", insertable = false,updatable = false),
+		@JoinColumn(name="FKJefeAcademia", referencedColumnName="FKJefeAcademia", insertable = false,updatable = false),
+		@JoinColumn(name="FKMaterias", referencedColumnName="FKMaterias", insertable = false,updatable = false),
+		@JoinColumn(name="FKProfesor", referencedColumnName="FKProfesor", insertable = false,updatable = false)
 		})
 	private Materias_has_Profesor materiasHasProfesor;
 

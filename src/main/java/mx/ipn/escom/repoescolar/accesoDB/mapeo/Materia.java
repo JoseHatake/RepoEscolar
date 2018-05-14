@@ -25,10 +25,10 @@ public class Materia implements Serializable {
 	//bi-directional many-to-one association to Academia
 	@ManyToOne
 	@JoinColumns({
-		@JoinColumn(name="FKAcademias", referencedColumnName="idAcademias"),
-		@JoinColumn(name="FKAdministrativo", referencedColumnName="FKAdministrativo"),
-		@JoinColumn(name="FKEscuela", referencedColumnName="FKEscuela"),
-		@JoinColumn(name="FKJefeAcademia", referencedColumnName="FKJefeAcademia")
+		@JoinColumn(name="FKAcademias", referencedColumnName="idAcademias", insertable = false,updatable = false),
+		@JoinColumn(name="FKAdministrativo", referencedColumnName="FKAdministrativo", insertable = false,updatable = false),
+		@JoinColumn(name="FKEscuela", referencedColumnName="FKEscuela", insertable = false,updatable = false),
+		@JoinColumn(name="FKJefeAcademia", referencedColumnName="FKJefeAcademia", insertable = false,updatable = false)
 		})
 	private Academia academia;
 

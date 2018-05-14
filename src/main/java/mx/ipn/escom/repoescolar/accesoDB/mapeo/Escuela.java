@@ -31,7 +31,7 @@ public class Escuela implements Serializable {
 
 	//bi-directional many-to-one association to Administrativo
 	@ManyToOne
-	@JoinColumn(name="FKAdministrativo")
+	@JoinColumn(name="FKAdministrativo", insertable = false,updatable = false)
 	private Administrativo administrativo;
 
 	public Escuela() {

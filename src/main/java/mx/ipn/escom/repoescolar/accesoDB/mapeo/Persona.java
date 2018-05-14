@@ -25,22 +25,22 @@ public class Persona implements Serializable {
 
 	//bi-directional many-to-one association to Administrativo
 	@ManyToOne
-	@JoinColumn(name="FKAdministrativo")
+	@JoinColumn(name="FKAdministrativo", insertable = false,updatable = false)
 	private Administrativo administrativo;
 
 	//bi-directional many-to-one association to Alumno
 	@ManyToOne
-	@JoinColumn(name="FKAlumno")
+	@JoinColumn(name="FKAlumno", insertable = false,updatable = false)
 	private Alumno alumno;
 
 	//bi-directional many-to-one association to JefeAcademia
 	@ManyToOne
-	@JoinColumn(name="FKJefeAcademia")
+	@JoinColumn(name="FKJefeAcademia", insertable = false,updatable = false)
 	private JefeAcademia jefeAcademia;
 
 	//bi-directional many-to-one association to Profesor
 	@ManyToOne
-	@JoinColumn(name="FKProfesor")
+	@JoinColumn(name="FKProfesor", insertable = false,updatable = false)
 	private Profesor profesor;
 
 	//bi-directional many-to-one association to Usuario

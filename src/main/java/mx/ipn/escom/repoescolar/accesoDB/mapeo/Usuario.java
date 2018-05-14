@@ -21,10 +21,10 @@ public class Usuario implements Serializable {
 	//bi-directional many-to-one association to Persona
 	@ManyToOne
 	@JoinColumns({
-		@JoinColumn(name="FKAdministrativo", referencedColumnName="FKAdministrativo"),
-		@JoinColumn(name="FKAlumno", referencedColumnName="FKAlumno"),
-		@JoinColumn(name="FKJefeAcademia", referencedColumnName="FKJefeAcademia"),
-		@JoinColumn(name="FKProfesor", referencedColumnName="FKProfesor")
+		@JoinColumn(name="FKAdministrativo", referencedColumnName="FKAdministrativo", insertable = false,updatable = false),
+		@JoinColumn(name="FKAlumno", referencedColumnName="FKAlumno", insertable = false,updatable = false),
+		@JoinColumn(name="FKJefeAcademia", referencedColumnName="FKJefeAcademia", insertable = false,updatable = false),
+		@JoinColumn(name="FKProfesor", referencedColumnName="FKProfesor", insertable = false,updatable = false)
 		})
 	private Persona persona;
 

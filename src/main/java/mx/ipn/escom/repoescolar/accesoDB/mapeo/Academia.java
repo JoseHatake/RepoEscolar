@@ -23,14 +23,14 @@ public class Academia implements Serializable {
 	//bi-directional many-to-one association to Escuela
 	@ManyToOne
 	@JoinColumns({
-		@JoinColumn(name="FKAdministrativo", referencedColumnName="FKAdministrativo"),
-		@JoinColumn(name="FKEscuela", referencedColumnName="idEscuela")
+		@JoinColumn(name="FKAdministrativo", referencedColumnName="FKAdministrativo", insertable = false,updatable = false),
+		@JoinColumn(name="FKEscuela", referencedColumnName="idEscuela", insertable = false,updatable = false)
 		})
 	private Escuela escuela;
 
 	//bi-directional many-to-one association to JefeAcademia
 	@ManyToOne
-	@JoinColumn(name="FKJefeAcademia")
+	@JoinColumn(name="FKJefeAcademia", insertable = false,updatable = false)
 	private JefeAcademia jefeAcademia;
 
 	//bi-directional many-to-one association to Materia
