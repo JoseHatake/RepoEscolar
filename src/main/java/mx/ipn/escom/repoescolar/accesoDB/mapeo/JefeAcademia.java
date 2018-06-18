@@ -16,24 +16,25 @@ public class JefeAcademia implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private String idJefeAcademia;
+	private int idJefeAcademia;
 
 	//bi-directional many-to-one association to Academia
-	@OneToMany(mappedBy="jefeAcademia")
+	@OneToMany(mappedBy="jefeAcademia", fetch=FetchType.EAGER)
 	private List<Academia> academias;
 
-	//bi-directional many-to-one association to Persona
-	@OneToMany(mappedBy="jefeAcademia")
-	private List<Persona> personas;
+	//bi-directional many-to-one association to Usuario
+	@ManyToOne
+	@JoinColumn(name="UsuarioFK")
+	private Usuario usuario;
 
 	public JefeAcademia() {
 	}
 
-	public String getIdJefeAcademia() {
+	public int getIdJefeAcademia() {
 		return this.idJefeAcademia;
 	}
 
-	public void setIdJefeAcademia(String idJefeAcademia) {
+	public void setIdJefeAcademia(int idJefeAcademia) {
 		this.idJefeAcademia = idJefeAcademia;
 	}
 
@@ -59,26 +60,15 @@ public class JefeAcademia implements Serializable {
 		return academia;
 	}
 
-	public List<Persona> getPersonas() {
-		return this.personas;
+	public Usuario getUsuario() {
+		return this.usuario;
 	}
 
-	public void setPersonas(List<Persona> personas) {
-		this.personas = personas;
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
-	public Persona addPersona(Persona persona) {
-		getPersonas().add(persona);
-		persona.setJefeAcademia(this);
-
-		return persona;
+	public Boolean isNew() {
+		return this.usuario == null;
 	}
-
-	public Persona removePersona(Persona persona) {
-		getPersonas().remove(persona);
-		persona.setJefeAcademia(null);
-
-		return persona;
-	}
-
 }

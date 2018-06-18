@@ -2,6 +2,7 @@ package mx.ipn.escom.repoescolar.accesoDB.mapeo;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 
 /**
@@ -13,32 +14,41 @@ import javax.persistence.*;
 public class Archivo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
-	private ArchivoPK id;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int idArchivo;
+
+	private Timestamp fechaSubida;
 
 	private String nombre;
 
-	//bi-directional many-to-one association to Materias_has_Profesor
+	//bi-directional many-to-one association to Materia
 	@ManyToOne
-	@JoinColumns({
-		@JoinColumn(name="FKAcademias", referencedColumnName="FKAcademias", insertable = false,updatable = false),
-		@JoinColumn(name="FKAdministrativo", referencedColumnName="FKAdministrativo", insertable = false,updatable = false),
-		@JoinColumn(name="FKEscuela", referencedColumnName="FKEscuela", insertable = false,updatable = false),
-		@JoinColumn(name="FKJefeAcademia", referencedColumnName="FKJefeAcademia", insertable = false,updatable = false),
-		@JoinColumn(name="FKMaterias", referencedColumnName="FKMaterias", insertable = false,updatable = false),
-		@JoinColumn(name="FKProfesor", referencedColumnName="FKProfesor", insertable = false,updatable = false)
-		})
-	private Materias_has_Profesor materiasHasProfesor;
+	@JoinColumn(name="MateriasFK")
+	private Materia materia;
+
+	//bi-directional many-to-one association to Profesor
+	@ManyToOne
+	@JoinColumn(name="ProfesorFK")
+	private Profesor profesor;
 
 	public Archivo() {
 	}
 
-	public ArchivoPK getId() {
-		return this.id;
+	public int getIdArchivo() {
+		return this.idArchivo;
 	}
 
-	public void setId(ArchivoPK id) {
-		this.id = id;
+	public void setIdArchivo(int idArchivo) {
+		this.idArchivo = idArchivo;
+	}
+
+	public Timestamp getFechaSubida() {
+		return this.fechaSubida;
+	}
+
+	public void setFechaSubida(Timestamp fechaSubida) {
+		this.fechaSubida = fechaSubida;
 	}
 
 	public String getNombre() {
@@ -49,12 +59,20 @@ public class Archivo implements Serializable {
 		this.nombre = nombre;
 	}
 
-	public Materias_has_Profesor getMateriasHasProfesor() {
-		return this.materiasHasProfesor;
+	public Materia getMateria() {
+		return this.materia;
 	}
 
-	public void setMateriasHasProfesor(Materias_has_Profesor materiasHasProfesor) {
-		this.materiasHasProfesor = materiasHasProfesor;
+	public void setMateria(Materia materia) {
+		this.materia = materia;
+	}
+
+	public Profesor getProfesor() {
+		return this.profesor;
+	}
+
+	public void setProfesor(Profesor profesor) {
+		this.profesor = profesor;
 	}
 
 }

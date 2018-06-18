@@ -31,6 +31,9 @@
 	float: right;
 	width: 16.43%;
 	border-radius: 0 10px;
+	position: fixed;
+	right: 0;
+	z-index: 10;
 }
 #menu-perfil-lateral li{
 	background-color: #892B28;

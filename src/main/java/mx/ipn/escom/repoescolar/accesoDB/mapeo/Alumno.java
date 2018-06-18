@@ -16,55 +16,81 @@ public class Alumno implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int boleta;
+	private int idAlumno;
 
-	//bi-directional many-to-many association to Materias_has_Profesor
-	@ManyToMany(mappedBy="alumnos")
-	private List<Materias_has_Profesor> materiasHasProfesors;
+	private String boleta;
 
-	//bi-directional many-to-one association to Persona
-	@OneToMany(mappedBy="alumno")
-	private List<Persona> personas;
+	//bi-directional many-to-one association to Usuario
+	@ManyToOne
+	@JoinColumn(name="UsuarioFK")
+	private Usuario usuario;
+
+	//bi-directional many-to-one association to Clase
+	@OneToMany(mappedBy="alumno", fetch=FetchType.EAGER)
+	private List<Clase> clases;
+
+	//bi-directional many-to-many association to Curso
+	@ManyToMany(mappedBy="alumnos", fetch=FetchType.EAGER)
+	private List<Curso> cursos;
 
 	public Alumno() {
 	}
 
-	public int getBoleta() {
+	public int getIdAlumno() {
+		return this.idAlumno;
+	}
+
+	public void setIdAlumno(int idAlumno) {
+		this.idAlumno = idAlumno;
+	}
+
+	public String getBoleta() {
 		return this.boleta;
 	}
 
-	public void setBoleta(int boleta) {
+	public void setBoleta(String boleta) {
 		this.boleta = boleta;
 	}
 
-	public List<Materias_has_Profesor> getMateriasHasProfesors() {
-		return this.materiasHasProfesors;
+	public Usuario getUsuario() {
+		return this.usuario;
 	}
 
-	public void setMateriasHasProfesors(List<Materias_has_Profesor> materiasHasProfesors) {
-		this.materiasHasProfesors = materiasHasProfesors;
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
-	public List<Persona> getPersonas() {
-		return this.personas;
+	public List<Clase> getClases() {
+		return this.clases;
 	}
 
-	public void setPersonas(List<Persona> personas) {
-		this.personas = personas;
+	public void setClases(List<Clase> clases) {
+		this.clases = clases;
 	}
 
-	public Persona addPersona(Persona persona) {
-		getPersonas().add(persona);
-		persona.setAlumno(this);
+	public Clase addClas(Clase clas) {
+		getClases().add(clas);
+		clas.setAlumno(this);
 
-		return persona;
+		return clas;
 	}
 
-	public Persona removePersona(Persona persona) {
-		getPersonas().remove(persona);
-		persona.setAlumno(null);
+	public Clase removeClas(Clase clas) {
+		getClases().remove(clas);
+		clas.setAlumno(null);
 
-		return persona;
+		return clas;
 	}
 
+	public List<Curso> getCursos() {
+		return this.cursos;
+	}
+
+	public void setCursos(List<Curso> cursos) {
+		this.cursos = cursos;
+	}
+
+	public Boolean isNew() {
+		return this.usuario == null;
+	}
 }

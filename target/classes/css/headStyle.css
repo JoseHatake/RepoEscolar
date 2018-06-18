@@ -1,5 +1,6 @@
 .logo-intitu{
-	max-width: 10%;
+	max-height: 70%;
+	width: 10%;
 }
 .izquierda{
 	float: left;
@@ -10,12 +11,15 @@
 #nombreInstitu{
 	text-align: center;
 	display: inline-block;
-	margin: 0 auto;
-	position: relative;
 	width: 80%;
+	height: 70%;
+}
+#nombreInstitu h1,h2,h3{
+	margin: 0;
 }
 #contenedorHeader{
 	overflow: hidden;
 	display: block;
 	width: 100%;
+	height: 100%;
 }

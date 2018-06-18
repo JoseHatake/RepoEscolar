@@ -6,46 +6,43 @@ import java.util.List;
 
 
 /**
- * The persistent class for the Academias database table.
+ * The persistent class for the Academia database table.
  * 
  */
 @Entity
-@Table(name="Academias")
 @NamedQuery(name="Academia.findAll", query="SELECT a FROM Academia a")
 public class Academia implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
-	private AcademiaPK id;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int idAcademias;
 
 	private String nombre;
 
 	//bi-directional many-to-one association to Escuela
 	@ManyToOne
-	@JoinColumns({
-		@JoinColumn(name="FKAdministrativo", referencedColumnName="FKAdministrativo", insertable = false,updatable = false),
-		@JoinColumn(name="FKEscuela", referencedColumnName="idEscuela", insertable = false,updatable = false)
-		})
+	@JoinColumn(name="EscuelaFK")
 	private Escuela escuela;
 
 	//bi-directional many-to-one association to JefeAcademia
 	@ManyToOne
-	@JoinColumn(name="FKJefeAcademia", insertable = false,updatable = false)
+	@JoinColumn(name="JefeAcademiaFK")
 	private JefeAcademia jefeAcademia;
 
 	//bi-directional many-to-one association to Materia
-	@OneToMany(mappedBy="academia")
+	@OneToMany(mappedBy="academia", fetch=FetchType.EAGER)
 	private List<Materia> materias;
 
 	public Academia() {
 	}
 
-	public AcademiaPK getId() {
-		return this.id;
+	public int getIdAcademias() {
+		return this.idAcademias;
 	}
 
-	public void setId(AcademiaPK id) {
-		this.id = id;
+	public void setIdAcademias(int idAcademias) {
+		this.idAcademias = idAcademias;
 	}
 
 	public String getNombre() {

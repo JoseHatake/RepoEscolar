@@ -8,3 +8,11 @@
 	text-align: center;
 	margin: 0.2em 0;
 }
+#contenidoEscuelas{
+	width: 90%;
+	height:100%;
+	display: block;
+	position: relative;
+	overflow: scroll;
+	z-index: 1;
+}

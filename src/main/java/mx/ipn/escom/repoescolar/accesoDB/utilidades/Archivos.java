@@ -11,7 +11,7 @@ import org.apache.commons.fileupload.FileItem;
 
 public class Archivos {
 	private String contexto;
-	private final static String ARCHIVERO = "/img/escuelas";
+	private final static String ARCHIVERO = "/img";
 	
 	public Archivos() {
 		super();
@@ -37,7 +37,7 @@ public class Archivos {
 		flag = true;
         try {
         		if (!this.existeArchivo(archivo))
-				this.crearArchivo(archivo);
+        			this.crearArchivo(archivo);
         		file = new File(contexto + ARCHIVERO + "/" + archivo, nombre);
 			item.write(file);
 		} catch (Exception e) {
@@ -54,22 +54,28 @@ public class Archivos {
 		return file.exists();
 	}
 	
+	public void borrarArchivo(String directorio) {
+		File file;
+		file = new File(contexto + ARCHIVERO + "/" + directorio);
+		file.delete();
+	}
+	
 	public Boolean exiteDocumento(String archivo,String documento) {
 		File file;
 		file = new File(contexto + ARCHIVERO + "/" + archivo + "/" + documento);
 		return file.exists();
 	}
 	
-	public void crearArchivo(String archivo) {
+	public void crearArchivo(String directorio) {
 		File file;
-		file = new File(contexto + ARCHIVERO + "/" + archivo);
+		file = new File(contexto + ARCHIVERO + "/" + directorio);
 		file.mkdirs();
 	}
 	
-	public Boolean renombrarArchivo(String archivo, String nuevoNombre){
+	public Boolean renombrarDirectorio(String directorioAntes, String directorioNuevo){
 		File fileAntes,fileDespues;
-		fileAntes = new File(contexto + ARCHIVERO + "/" + archivo);
-		fileDespues = new File(contexto + ARCHIVERO + "/" + nuevoNombre);
+		fileAntes = new File(contexto + ARCHIVERO + "/" + directorioAntes);
+		fileDespues = new File(contexto + ARCHIVERO + "/" + directorioNuevo);
 		return fileAntes.renameTo(fileDespues);
 	}
 	

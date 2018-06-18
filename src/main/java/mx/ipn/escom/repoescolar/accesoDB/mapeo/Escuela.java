@@ -14,35 +14,63 @@ import java.util.List;
 public class Escuela implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
-	private EscuelaPK id;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int idEscuela;
+
+	private int claveAdmin;
+
+	private int claveProfesor;
 
 	private String direccion;
 
-	private int extension;
+	private String extension;
 
 	private String nombre;
 
-	private int telefono;
+	private String referencia;
+
+	private String sitioWeb;
+
+	private String telefono;
 
 	//bi-directional many-to-one association to Academia
-	@OneToMany(mappedBy="escuela")
+	@OneToMany(mappedBy="escuela", fetch=FetchType.EAGER)
 	private List<Academia> academias;
 
-	//bi-directional many-to-one association to Administrativo
-	@ManyToOne
-	@JoinColumn(name="FKAdministrativo", insertable = false,updatable = false)
-	private Administrativo administrativo;
+	//bi-directional many-to-one association to Grupo
+	@OneToMany(mappedBy="escuela", fetch=FetchType.EAGER)
+	private List<Grupo> grupos;
+
+	//bi-directional many-to-one association to Usuario
+	@OneToMany(mappedBy="escuela", fetch=FetchType.EAGER)
+	private List<Usuario> usuarios;
 
 	public Escuela() {
 	}
 
-	public EscuelaPK getId() {
-		return this.id;
+	public int getIdEscuela() {
+		return this.idEscuela;
 	}
 
-	public void setId(EscuelaPK id) {
-		this.id = id;
+	public void setIdEscuela(int idEscuela) {
+		this.idEscuela = idEscuela;
+	}
+
+	public int getClaveAdmin() {
+		return this.claveAdmin;
+	}
+
+	public void setClaveAdmin(int claveAdmin) {
+		this.claveAdmin = claveAdmin;
+	}
+
+	public int getClaveProfesor() {
+		return this.claveProfesor;
+	}
+
+	public void setClaveProfesor(int claveProfesor) {
+		this.claveProfesor = claveProfesor;
 	}
 
 	public String getDireccion() {
@@ -53,11 +81,11 @@ public class Escuela implements Serializable {
 		this.direccion = direccion;
 	}
 
-	public int getExtension() {
+	public String getExtension() {
 		return this.extension;
 	}
 
-	public void setExtension(int extension) {
+	public void setExtension(String extension) {
 		this.extension = extension;
 	}
 
@@ -69,11 +97,27 @@ public class Escuela implements Serializable {
 		this.nombre = nombre;
 	}
 
-	public int getTelefono() {
+	public String getReferencia() {
+		return this.referencia;
+	}
+
+	public void setReferencia(String referencia) {
+		this.referencia = referencia;
+	}
+
+	public String getSitioWeb() {
+		return this.sitioWeb;
+	}
+
+	public void setSitioWeb(String sitioWeb) {
+		this.sitioWeb = sitioWeb;
+	}
+
+	public String getTelefono() {
 		return this.telefono;
 	}
 
-	public void setTelefono(int telefono) {
+	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
 
@@ -99,12 +143,48 @@ public class Escuela implements Serializable {
 		return academia;
 	}
 
-	public Administrativo getAdministrativo() {
-		return this.administrativo;
+	public List<Grupo> getGrupos() {
+		return this.grupos;
 	}
 
-	public void setAdministrativo(Administrativo administrativo) {
-		this.administrativo = administrativo;
+	public void setGrupos(List<Grupo> grupos) {
+		this.grupos = grupos;
+	}
+
+	public Grupo addGrupo(Grupo grupo) {
+		getGrupos().add(grupo);
+		grupo.setEscuela(this);
+
+		return grupo;
+	}
+
+	public Grupo removeGrupo(Grupo grupo) {
+		getGrupos().remove(grupo);
+		grupo.setEscuela(null);
+
+		return grupo;
+	}
+
+	public List<Usuario> getUsuarios() {
+		return this.usuarios;
+	}
+
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
+	}
+
+	public Usuario addUsuario(Usuario usuario) {
+		getUsuarios().add(usuario);
+		usuario.setEscuela(this);
+
+		return usuario;
+	}
+
+	public Usuario removeUsuario(Usuario usuario) {
+		getUsuarios().remove(usuario);
+		usuario.setEscuela(null);
+
+		return usuario;
 	}
 
 }

@@ -23,16 +23,18 @@
 	<header>
 		<div id="head-logo" style="padding: 10px;"></div>
 	</header>
-	<div class="contenedorCentral centrar">
-		<h3>Iniciar sesión</h3>
-		<form action="Acciones?accion=3&direccion=inicioSesion.jsp" method="POST" style="width: 210px;" class="centrar">
-			<input type="number" maxlength="13" minlength="5" placeholder="Número de boleta" name="numeroBoleta" class="log" required>
-			<input type="password" maxlength="20" minlength="5" placeholder="Contraseña" name="clave" class="log" required>
-			<input type="submit" value="Iniciar" class="centrar botonConfirm">
-		</form>
-		<a class="resaltarLink">Nueva cuenta</a>
-		<br>
-		<a class="resaltarLink">Recuperar contraseña</a>
+	<div class="contenido centrar">
+		<div class="contenedorCentral centrar">
+			<h3>Iniciar sesión</h3>
+			<form action="Acciones?accion=3&direccion=inicioRepoEscolar.jsp" method="POST" style="width: 210px;" class="centrar">
+				<input type="number" maxlength="13" minlength="5" placeholder="Número de boleta" name="numeroAcceso" class="log" required>
+				<input type="password" maxlength="20" minlength="5" placeholder="Contraseña" name="clave" class="log" required>
+				<input type="submit" value="Iniciar" class="centrar botonConfirm">
+			</form>
+			<a href="nuevaCuenta.jsp" class="resaltarLink">Nueva cuenta</a>
+			<br>
+			<a class="resaltarLink">Recuperar contraseña</a>
+		</div>
 	</div>
 </body>
 </html>

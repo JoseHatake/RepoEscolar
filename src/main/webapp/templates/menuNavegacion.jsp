@@ -5,16 +5,16 @@
 	<a href="inicioRepoEscolar.jsp">
 		<li><div>Inicio</div></li>
 	</a>
-	<a>
+	<a href="http://www.ipn.mx/SiteCollectionDocuments/Calendario-IPN/Recalendarizacion_todas-las-UA.pdf" target="_blanck">
 		<li><div>Calendario escolar</div></li>
 	</a>
-	<a>
-		<li><div>Carreras y materias</div></li>
+	<a href="Acciones?accion=6&direccion=academiasMaterias.jsp">
+		<li><div>Academias y materias</div></li>
 	</a>
-	<a>
+	<a href="http://www.ipn.mx/Paginas/inicio.aspx" target="_blanck">
 		<li><div>Sitio oficial IPN</div></li>
 	</a>
-	<a>
+	<a href="${escuela.sitioWeb}" target="_blanck">
 		<li><div>Sitio oficial escuela</div></li>
 	</a>
 	<li onmouseover="switchEstado('menu-perfil-${perfil.rol}');">	

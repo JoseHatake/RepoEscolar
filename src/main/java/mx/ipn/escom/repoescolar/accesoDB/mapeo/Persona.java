@@ -14,48 +14,39 @@ import java.util.List;
 public class Persona implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
-	private PersonaPK id;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int idPersona;
+
+	private String apellidos;
 
 	private String correo;
 
-	private String nombre;
+	private String nombres;
 
-	private int telefon;
-
-	//bi-directional many-to-one association to Administrativo
-	@ManyToOne
-	@JoinColumn(name="FKAdministrativo", insertable = false,updatable = false)
-	private Administrativo administrativo;
-
-	//bi-directional many-to-one association to Alumno
-	@ManyToOne
-	@JoinColumn(name="FKAlumno", insertable = false,updatable = false)
-	private Alumno alumno;
-
-	//bi-directional many-to-one association to JefeAcademia
-	@ManyToOne
-	@JoinColumn(name="FKJefeAcademia", insertable = false,updatable = false)
-	private JefeAcademia jefeAcademia;
-
-	//bi-directional many-to-one association to Profesor
-	@ManyToOne
-	@JoinColumn(name="FKProfesor", insertable = false,updatable = false)
-	private Profesor profesor;
+	private String telefono;
 
 	//bi-directional many-to-one association to Usuario
-	@OneToMany(mappedBy="persona")
+	@OneToMany(mappedBy="persona", fetch=FetchType.EAGER)
 	private List<Usuario> usuarios;
 
 	public Persona() {
 	}
 
-	public PersonaPK getId() {
-		return this.id;
+	public int getIdPersona() {
+		return this.idPersona;
 	}
 
-	public void setId(PersonaPK id) {
-		this.id = id;
+	public void setIdPersona(int idPersona) {
+		this.idPersona = idPersona;
+	}
+
+	public String getApellidos() {
+		return this.apellidos;
+	}
+
+	public void setApellidos(String apellidos) {
+		this.apellidos = apellidos;
 	}
 
 	public String getCorreo() {
@@ -66,52 +57,20 @@ public class Persona implements Serializable {
 		this.correo = correo;
 	}
 
-	public String getNombre() {
-		return this.nombre;
+	public String getNombres() {
+		return this.nombres;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setNombres(String nombres) {
+		this.nombres = nombres;
 	}
 
-	public int getTelefon() {
-		return this.telefon;
+	public String getTelefono() {
+		return this.telefono;
 	}
 
-	public void setTelefon(int telefon) {
-		this.telefon = telefon;
-	}
-
-	public Administrativo getAdministrativo() {
-		return this.administrativo;
-	}
-
-	public void setAdministrativo(Administrativo administrativo) {
-		this.administrativo = administrativo;
-	}
-
-	public Alumno getAlumno() {
-		return this.alumno;
-	}
-
-	public void setAlumno(Alumno alumno) {
-		this.alumno = alumno;
-	}
-
-	public JefeAcademia getJefeAcademia() {
-		return this.jefeAcademia;
-	}
-
-	public void setJefeAcademia(JefeAcademia jefeAcademia) {
-		this.jefeAcademia = jefeAcademia;
-	}
-
-	public Profesor getProfesor() {
-		return this.profesor;
-	}
-
-	public void setProfesor(Profesor profesor) {
-		this.profesor = profesor;
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
 	}
 
 	public List<Usuario> getUsuarios() {

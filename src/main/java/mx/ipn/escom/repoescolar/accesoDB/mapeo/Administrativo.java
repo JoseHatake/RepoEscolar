@@ -2,7 +2,6 @@ package mx.ipn.escom.repoescolar.accesoDB.mapeo;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.util.List;
 
 
 /**
@@ -16,69 +15,33 @@ public class Administrativo implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private String idAdministrativo;
+	private int idAdministrativo;
 
-	//bi-directional many-to-one association to Escuela
-	@OneToMany(mappedBy="administrativo")
-	private List<Escuela> escuelas;
-
-	//bi-directional many-to-one association to Persona
-	@OneToMany(mappedBy="administrativo")
-	private List<Persona> personas;
+	//bi-directional many-to-one association to Usuario
+	@ManyToOne
+	@JoinColumn(name="UsuarioFK")
+	private Usuario usuario;
 
 	public Administrativo() {
 	}
 
-	public String getIdAdministrativo() {
+	public int getIdAdministrativo() {
 		return this.idAdministrativo;
 	}
 
-	public void setIdAdministrativo(String idAdministrativo) {
+	public void setIdAdministrativo(int idAdministrativo) {
 		this.idAdministrativo = idAdministrativo;
 	}
 
-	public List<Escuela> getEscuelas() {
-		return this.escuelas;
+	public Usuario getUsuario() {
+		return this.usuario;
 	}
 
-	public void setEscuelas(List<Escuela> escuelas) {
-		this.escuelas = escuelas;
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
-	public Escuela addEscuela(Escuela escuela) {
-		getEscuelas().add(escuela);
-		escuela.setAdministrativo(this);
-
-		return escuela;
+	public Boolean isNew() {
+		return this.usuario == null;
 	}
-
-	public Escuela removeEscuela(Escuela escuela) {
-		getEscuelas().remove(escuela);
-		escuela.setAdministrativo(null);
-
-		return escuela;
-	}
-
-	public List<Persona> getPersonas() {
-		return this.personas;
-	}
-
-	public void setPersonas(List<Persona> personas) {
-		this.personas = personas;
-	}
-
-	public Persona addPersona(Persona persona) {
-		getPersonas().add(persona);
-		persona.setAdministrativo(this);
-
-		return persona;
-	}
-
-	public Persona removePersona(Persona persona) {
-		getPersonas().remove(persona);
-		persona.setAdministrativo(null);
-
-		return persona;
-	}
-
 }

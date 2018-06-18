@@ -21,21 +21,24 @@
 	<!-- JavaScript -->
 </head>
 <body>
-	<header>
+	<div id="contenidoEscuelas" class="centrar">
 		<h1 id="nombreApp">RepoEscolar</h1>
-	</header>
-	<div id="containerEscuelas">
-		<c:forEach items="${escuelas}" var="escuela">
-			<a href="Acciones?accion=2&direccion=inicioSesion.jsp&escuela=${escuela.id}">
-				<div class="distribucion">
-					<div class="escuela centrar">
-						<img alt="${escuela.nombre}" src="data:image/jpeg;base64,${escuela.escudo}">
-						<hr>
-						<p>${escuela.nombre}</p>
+		<div id="containerEscuelas">
+			<c:forEach items="${escuelas}" var="escuela">
+				<a href="Acciones?accion=2&direccion=inicioSesion.jsp&escuela=${escuela.id}">
+					<div class="distribucion">
+						<div class="escuela centrar">
+							<img alt="${escuela.nombre}" src="data:image/jpeg;base64,${escuela.escudo}">
+							<hr>
+							<p>${escuela.nombre}</p>
+						</div>
 					</div>
-				</div>
-			</a>
-		</c:forEach>
+				</a>
+			</c:forEach>
+		</div>
 	</div>
+	<footer id="footer">
+		<!-- Aquí se carga el footer -->
+	</footer>
 </body>
 </html>

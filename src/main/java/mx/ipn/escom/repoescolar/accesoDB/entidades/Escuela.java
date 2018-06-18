@@ -3,6 +3,8 @@ package mx.ipn.escom.repoescolar.accesoDB.entidades;
 public class Escuela {
 	private String nombre;
 	private String escudo;
+	private String sitioWeb;
+	private String referencia;
 	private Integer id;
 	
 	public Escuela() {
@@ -10,11 +12,12 @@ public class Escuela {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Escuela(String nombre, String escudo, Integer id) {
-		super();
-		this.nombre = nombre;
-		this.escudo = escudo;
-		this.id = id;
+	public String getReferencia() {
+		return referencia;
+	}
+
+	public void setReferencia(String referencia) {
+		this.referencia = referencia;
 	}
 
 	public String getNombre() {
@@ -39,5 +42,13 @@ public class Escuela {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getSitioWeb() {
+		return sitioWeb;
+	}
+
+	public void setSitioWeb(String sitioWeb) {
+		this.sitioWeb = sitioWeb;
 	}
 }

@@ -15,36 +15,36 @@ import java.util.List;
 public class Materia implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
-	private MateriaPK id;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int idMaterias;
 
 	private int nivel;
 
 	private String nombre;
 
+	//bi-directional many-to-one association to Archivo
+	@OneToMany(mappedBy="materia", fetch=FetchType.EAGER)
+	private List<Archivo> archivos;
+
+	//bi-directional many-to-one association to Curso
+	@OneToMany(mappedBy="materia", fetch=FetchType.EAGER)
+	private List<Curso> cursos;
+
 	//bi-directional many-to-one association to Academia
 	@ManyToOne
-	@JoinColumns({
-		@JoinColumn(name="FKAcademias", referencedColumnName="idAcademias", insertable = false,updatable = false),
-		@JoinColumn(name="FKAdministrativo", referencedColumnName="FKAdministrativo", insertable = false,updatable = false),
-		@JoinColumn(name="FKEscuela", referencedColumnName="FKEscuela", insertable = false,updatable = false),
-		@JoinColumn(name="FKJefeAcademia", referencedColumnName="FKJefeAcademia", insertable = false,updatable = false)
-		})
+	@JoinColumn(name="AcademiaFK")
 	private Academia academia;
-
-	//bi-directional many-to-many association to Profesor
-	@ManyToMany(mappedBy="materias")
-	private List<Profesor> profesors;
 
 	public Materia() {
 	}
 
-	public MateriaPK getId() {
-		return this.id;
+	public int getIdMaterias() {
+		return this.idMaterias;
 	}
 
-	public void setId(MateriaPK id) {
-		this.id = id;
+	public void setIdMaterias(int idMaterias) {
+		this.idMaterias = idMaterias;
 	}
 
 	public int getNivel() {
@@ -63,20 +63,56 @@ public class Materia implements Serializable {
 		this.nombre = nombre;
 	}
 
+	public List<Archivo> getArchivos() {
+		return this.archivos;
+	}
+
+	public void setArchivos(List<Archivo> archivos) {
+		this.archivos = archivos;
+	}
+
+	public Archivo addArchivo(Archivo archivo) {
+		getArchivos().add(archivo);
+		archivo.setMateria(this);
+
+		return archivo;
+	}
+
+	public Archivo removeArchivo(Archivo archivo) {
+		getArchivos().remove(archivo);
+		archivo.setMateria(null);
+
+		return archivo;
+	}
+
+	public List<Curso> getCursos() {
+		return this.cursos;
+	}
+
+	public void setCursos(List<Curso> cursos) {
+		this.cursos = cursos;
+	}
+
+	public Curso addCurso(Curso curso) {
+		getCursos().add(curso);
+		curso.setMateria(this);
+
+		return curso;
+	}
+
+	public Curso removeCurso(Curso curso) {
+		getCursos().remove(curso);
+		curso.setMateria(null);
+
+		return curso;
+	}
+
 	public Academia getAcademia() {
 		return this.academia;
 	}
 
 	public void setAcademia(Academia academia) {
 		this.academia = academia;
-	}
-
-	public List<Profesor> getProfesors() {
-		return this.profesors;
-	}
-
-	public void setProfesors(List<Profesor> profesors) {
-		this.profesors = profesors;
 	}
 
 }

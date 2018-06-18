@@ -25,5 +25,8 @@
 		<nav id="menu-navegacion"></nav>
 		<div id="menu-perfil-${perfil.rol}" style="display: none;" onmouseleave="switchEstado('menu-perfil-${perfil.rol}')"></div>
 	</header>
+	<div class="contenido centrar">
+		<img alt="Cartel" src="img/web.png" class="centrar" width="100%">
+	</div>
 </body>
 </html>
