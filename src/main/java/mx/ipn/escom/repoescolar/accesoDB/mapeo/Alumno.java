@@ -93,4 +93,8 @@ public class Alumno implements Serializable {
 	public Boolean isNew() {
 		return this.usuario == null;
 	}
+	
+	public Boolean isRegistered() {
+		return this.boleta != null;
+	}
 }

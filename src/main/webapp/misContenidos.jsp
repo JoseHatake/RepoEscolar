@@ -64,7 +64,7 @@
 					<select name="materiaAsociada" required>
 						<option value="">Selecciona una materia</option>
 						<c:forEach items="${profesor.cursos}" var="curso">
-							<option value="${curso.materia.idMaterias}"><c:out value="${curso.materia.nombre}"></c:out></option>
+							<option value="${curso.materia.idMaterias}"><c:out value="${curso.materia.nombre} ${curso.grupo.grupo}"></c:out></option>
 						</c:forEach>
 					</select>
 					<input type="file" name="archivo" accept="file_extension|audio/*|video/*|image/*|media_type">

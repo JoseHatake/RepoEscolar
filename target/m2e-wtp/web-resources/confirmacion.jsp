@@ -36,6 +36,10 @@
 					<h1>Esa cuenta ya EXISTE!</h1>
 					<p>El número de cuenta que proporcionaste no ha sido registrado o ya ha sido asignado a alguien más, intenta con otro.</p>
 				</c:when>
+				<c:when test="${mensaje == 6}">
+					<h1>El número de acceso (Boleta) no ha sido registrado!</h1>
+					<p>El número de boleta que has proporcionado no ha sido registrado, consulta con tu administrador escolar para más información.</p>
+				</c:when>
 				<c:when test="${mensaje == 3}">
 					<h1>Nueva escuela creada con éxito!</h1>
 					<p>Nombre: <c:out value="${escuela.nombre}"></c:out></p>
@@ -64,7 +68,7 @@
 			</c:choose>
 			<br><br>
 			<c:choose>
-				<c:when test="${mensaje == 1 || mensaje == 2}">
+				<c:when test="${mensaje == 1 || mensaje == 2 || mensaje == 6}">
 					<a href="inicioSesion.jsp" class="resaltarLink">Iniciar sesión</a>
 					<a href="nuevaCuenta.jsp" class="resaltarLink">Nueva cuenta</a>
 				</c:when>

@@ -43,8 +43,8 @@
 				<input type="checkbox" name="cargo" value="2" onchange="ifCheckedThenById('cargo',{'claveAcceso1','claveAcceso2'})">Profesor
 				<br>
 				<label for="claveRegistro">Introduce tu clave de registro</label>
-				<input type="password" maxlength="20" minlength="5" placeholder="Clave de acceso" id="claveAcceso1" name="claveAcceso" class="log" onchange="validaClavesIguales('claveAcceso1','claveAcceso2','registro');" required>
-				<input type="password" maxlength="20" minlength="5" placeholder="Repetir clave" id="claveAcceso2" name="claveAcceso" class="log" onchange="validaClavesIguales('claveAcceso1','claveAcceso2','registro');"  required>
+				<input type="password" maxlength="20" minlength="5" placeholder="Clave de acceso" id="claveAcceso1" name="claveAcceso" class="log" onchange="validaClavesIguales('claveAcceso1','claveAcceso2','registro');">
+				<input type="password" maxlength="20" minlength="5" placeholder="Repetir clave" id="claveAcceso2" name="claveAcceso" class="log" onchange="validaClavesIguales('claveAcceso1','claveAcceso2','registro');">
 				<input type="submit" id="registro" value="Registrar" class="centrar botonConfirm">		
 			</form>
 			<p>* Campos obligatorios</p>

@@ -32,13 +32,13 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
+	    <dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
         <!-- Dependencias para la nueva versión de java -->
         <dependency>
         	<groupId>javax.xml.bind</groupId>
@@ -268,6 +268,11 @@
 					</configuration>
 				</execution>
 			</executions>
+		</plugin>
+		<plugin>
+			<groupId>com.heroku.sdk</groupId>
+			<artifactId>heroku-maven-plugin</artifactId>
+			<version>2.0.3</version>
 		</plugin>
       </plugins>
     </pluginManagement>

@@ -29,6 +29,15 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+/**
+ * - Las clases que terminan con Bs son las encargadas de hacer las transacciones con la base de datos.
+ * - Las clases que se encuentran en el paquete mx.ipn.escom.repoescolar.accesoDB.mapeo 
+ * 	 corresponden a los mapeos de las tablas de la Base de Datos para hacer el manejo de cada tabla.
+ * 
+ * - Las clases que estan en el paquete mx.ipn.escom.repoescolar.accesoDB.entidades son usapdas para 
+ * 	 cargar información a la sesión para consultarla en todo momento por la vista y por el controlador.
+ * **/
+
 import mx.ipn.escom.repoescolar.accesoDB.bs.AcademiaBs;
 import mx.ipn.escom.repoescolar.accesoDB.bs.AdministradorBs;
 import mx.ipn.escom.repoescolar.accesoDB.bs.AdministrativoBs;
@@ -57,7 +66,7 @@ import mx.ipn.escom.repoescolar.accesoDB.mapeo.Materia;
 import mx.ipn.escom.repoescolar.accesoDB.mapeo.Persona;
 import mx.ipn.escom.repoescolar.accesoDB.mapeo.Profesor;
 import mx.ipn.escom.repoescolar.accesoDB.mapeo.Usuario;
-import mx.ipn.escom.repoescolar.accesoDB.utilidades.StringCodificador;
+import mx.ipn.escom.repoescolar.accesoDB.utilidades.StringCodificador; //Esta clase es usada para converti el encodig de los parámetros recibidos por parámetro en las request.
 
 /**
  * Servlet implementation class Acciones
@@ -106,6 +115,15 @@ public class Acciones extends HttpServlet {
 	
 	@Autowired
 	private GrupoBs grupoBs;
+	
+	
+	/**
+	 * La constante SYSTEMA requiere el valor siguiente dependiento del Sistema Operativo
+	 * SISTEMA = true;  //Linux - MAC
+	 * SISTEMA = false;  //Windows
+	 * **/
+	
+	private static Boolean SISTEMA = true;
     
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -132,9 +150,14 @@ public class Acciones extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		RequestDispatcher rd = null;
-		response.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8"); //Cambia el encodig de las respuestas del servlet
+		request.setCharacterEncoding("UTF-8"); //Cambia el encodig de las peticiones del servlet
+		//Obtiene la acción a realizar por el servlet, que corresponde a una funcionalidad del sistema
 		Integer accion = Integer.valueOf((String) request.getParameter("accion"));
+		//Obtiene el nombre del jsp a donde redireccionará después de procesar
 		String direccion = request.getParameter("direccion");
+		
+		//Menú de funcionalidades del sistema
 		switch (accion) {
 			case 1:
 				cargarEscuelas(request);
@@ -232,10 +255,17 @@ public class Acciones extends HttpServlet {
 				agregarMaterias(request);
 				break;
 		}
+		//Establece la ruta de redirección
 		rd = request.getRequestDispatcher(direccion);
+		//Hace la redirección con las variables del scope del controlador
 		rd.forward(request, response);
 	}
 	
+	/**
+	 * Itera cada nombre de materia nueva para insertarla en la base de datos.
+	 * La materia se agrega a la academia en la que esté registrado el jefe de academia.
+	 * También se le asigna un nivel a la materia
+	 * */
 	private void agregarMaterias(HttpServletRequest request) {
 		String[] materiaNueva,nivelMateria;
 		Integer idAcademias,counter,nivel;
@@ -248,6 +278,7 @@ public class Acciones extends HttpServlet {
 		academia = academiaBs.searchById(idAcademias);
 		
 		counter = 0;
+		
 		for (String nombreMateria : materiaNueva) {
 			nivel = Integer.parseInt(nivelMateria[counter++]);
 			materia = new Materia();
@@ -258,6 +289,10 @@ public class Acciones extends HttpServlet {
 		}
 		infoMateriasJefeAcademia(request);
 	}
+	
+	/**
+	 * Lista las materias a eliminar que el usuario haya elegido y las busca por idMateria
+	 * **/
 	private void borrarMaterias(HttpServletRequest request) {
 		String[] materiaAEliminar;
 		Integer idMateria;
@@ -271,6 +306,11 @@ public class Acciones extends HttpServlet {
 		}
 		infoMateriasJefeAcademia(request);
 	}
+	
+	/**
+	 * Manda información de de la academia del jefe de academia y cada una de las
+	 * materias que tiene la academia.
+	 * **/
 	private void infoMateriasJefeAcademia(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Usuario usuario;
@@ -286,6 +326,15 @@ public class Acciones extends HttpServlet {
 		request.setAttribute("materias", materias);
 		request.setAttribute("academia", academia);
 	}
+	
+	/**
+	 * Se obtiene por medio de items las partes del formulario de donde viene la información
+	 * 
+	 * Para guardar la foto se consulta el contexto de la aplicación.
+	 * Se construye un path y se escribe dentro del el el archvio que se haya subido como un item.
+	 * Se guarda cada uno de los parámetros del formulario en variables para después
+	 * pasarlo a cada una de las variables de los mapeos de Persona.
+	 * **/
 	private void editarPerfil(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		StringCodificador codificador = new StringCodificador();
@@ -293,7 +342,7 @@ public class Acciones extends HttpServlet {
 		Usuario usuario;
 		PerfilUsuario perfil;
 		Archivos archivo = new Archivos();
-		String contexto,path;
+		String contexto,path,carpetaPerfil;
 		
 		contexto = (String) session.getAttribute("contexto");
 		archivo.setContexto(contexto);
@@ -311,7 +360,10 @@ public class Acciones extends HttpServlet {
             item = partes.get(0);
     		usuario = (Usuario) session.getAttribute("usuario");
     		perfil = (PerfilUsuario) session.getAttribute("perfil");
-            path = contexto + "/img/perfil/";
+    		if (SISTEMA)
+    			path = contexto + "/img/perfil/";
+    		else
+    			path = contexto + "\\img\\perfil\\";
             
             persona = usuario.getPersona();
             
@@ -336,15 +388,27 @@ public class Acciones extends HttpServlet {
             
             factory.setRepository(file);
             
+            if (SISTEMA)
+            	carpetaPerfil = "perfil/";
+            else
+            	carpetaPerfil = "perfil\\";
+            
 			perfil.setNombre(persona.getNombres());
-			if (archivo.existeArchivo("perfil/" + persona.getIdPersona() + ".png"))
-				perfil.setAvatar(archivo.obtenerImagenCodificada("perfil/", persona.getIdPersona() + ".png"));
+			if (archivo.existeArchivo(carpetaPerfil + persona.getIdPersona() + ".png"))
+				perfil.setAvatar(archivo.obtenerImagenCodificada(carpetaPerfil, persona.getIdPersona() + ".png"));
 			session.setAttribute("usuario", usuario);
 			session.setAttribute("perfil", perfil);
         }catch (Exception e) {
         	System.err.println(e);
 		}
 	}
+	/**
+	 * Cambia aun usuario tipo Profesor a Jefe de academia
+	 * 
+	 * Primero verifica si existe ya un jefe de academia asignado a determianda academia.
+	 * Si ya existe un jefe de academia lo cambia a profesor y asigna al nuevo.
+	 * Si no existe solo agrega al jefe de academia y lo elimina de maestro.
+	 * **/
 	private void cambiarJefeAcademia(HttpServletRequest request) {
 		Integer idProfesorNuevoJefeAcademia,IdAcademia;
 		Academia academia;
@@ -377,7 +441,11 @@ public class Acciones extends HttpServlet {
 			//Guardo el jefe de academia
 			profesor = profesorBs.searchById(idProfesorNuevoJefeAcademia);
 			jefeAcademiaNuevoActual.setUsuario(profesor.getUsuario());
-			jefeAcademiaBs.save(jefeAcademiaNuevoActual);
+			jefeAcademiaNuevoActual = jefeAcademiaBs.save(jefeAcademiaNuevoActual);
+			
+			//Se actualiza el jefe de academia
+			academia.setJefeAcademia(jefeAcademiaNuevoActual);
+			academia = academiaBs.update(academia);
 		}
 		
 		//Elimino al profesor que pasa a ser jefe de academia
@@ -385,6 +453,10 @@ public class Acciones extends HttpServlet {
 		
 		infoJefeAcademia(request);
 	}
+	
+	/**
+	 * Regresa en la request la información del jefe de academia de la escuela actual
+	 * **/
 	private void infoJefeAcademia(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		List<Profesor> profesores;
@@ -396,6 +468,11 @@ public class Acciones extends HttpServlet {
 		request.setAttribute("profesores", profesores);
 		cargdaAcademiasMaterias(request);
 	}
+	
+	/**
+	 * Borra las academias seleccionadas en la vista.
+	 * Lista las id de las academias y las busca para borralas por medio de su clase Bs
+	 * **/
 	private void borrarAcademias(HttpServletRequest request) {
 		Academia academia;
 		String[] academiaAEliminar;
@@ -410,6 +487,11 @@ public class Acciones extends HttpServlet {
 		}
 		cargdaAcademiasMaterias(request);
 	}
+	
+	/**
+	 * Crea nuevas academias con los nombres y las asigna a la escuela en donde el administrador
+	 * este registrado.
+	 * **/
 	private void crearAcademias(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Escuela escuelaUtil;
@@ -429,6 +511,12 @@ public class Acciones extends HttpServlet {
 		}
 		cargdaAcademiasMaterias(request);
 	}
+	
+	/**
+	 * Se generan y guardan los números de acceso (boletas) del rango que el administrador asigne.
+	 * Una vez creados y guardados los números de acceso se mandan a la vista para que el usuario
+	 * verifique su creación correcta.
+	 * **/
 	private void generarBoletasAlumno(HttpServletRequest request) {
 		Integer boletaInicial,boletaFinal,mensaje;
 		Alumno alumno;
@@ -446,6 +534,14 @@ public class Acciones extends HttpServlet {
 		request.setAttribute("boletaInicial", boletaInicial);
 		request.setAttribute("boletaFinal", boletaFinal);
 	}
+	
+	/**
+	 * Para registrar escuela se obtiene el formulario en items:
+	 * Guarda la imagen de la escuela
+	 * Obtiene cada uno de los parámetros del formulario en items y los castea a Strings
+	 * Guarda en los campos de la escuela los datos del formulario
+	 * La clave de acceso para el registro de Administrador y Profesores se hashes y guarda en la DB
+	 * **/
 	private void registrarEscuela(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String nombre,direccion,telefono,extension,sitioWeb,referencia,contexto,path,claveAdminPlano,claveProfesorPlano;
@@ -478,7 +574,11 @@ public class Acciones extends HttpServlet {
     		claveAdmin = claveAdminPlano.hashCode();
     		claveProfesor = claveProfesorPlano.hashCode();
             
-            path = contexto + "/img/escuelas/" + referencia;
+    		if (SISTEMA)
+    			path = contexto + "/img/escuelas/" + referencia;
+    		else
+    			path = contexto + "\\img\\escuelas\\" + referencia;
+    			
             file = new File(path);
             if (!file.exists()) {
                 file.mkdirs();
@@ -512,6 +612,10 @@ public class Acciones extends HttpServlet {
 		}
         request.setAttribute("mensaje", mensaje);
 	}
+	
+	/**
+	 * Borra los grupos buscandolos por la lista de idGrupo que obtiene de la vista
+	 * **/
 	private void borrarGrupos(HttpServletRequest request) {
 		String[] gruposAEliminar;
 		Integer idGrupo;
@@ -524,6 +628,12 @@ public class Acciones extends HttpServlet {
 		}
 		infoGrupos(request);
 	}
+	
+	/**
+	 * Crea nuevos grupos con los parámetros del formualrio
+	 * Obtiene el nivel,turno y la cantidad de grupos a crear
+	 * Construye el nombre de los grupos y los guarda en la base de datos
+	 * **/
 	private void crearGrupos(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String[] niveles,turno,numeroGrupo;
@@ -552,6 +662,11 @@ public class Acciones extends HttpServlet {
 		}
 		infoGrupos(request);
 	}
+	
+	/**
+	 * Un alumno puede inscribir varias materias con el id del curso que haya elegido
+	 * Sobre la vista se filtran las academias y las materia para solo mandar id del curso.
+	 * **/
 	private void inscribirClase(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Usuario usuario;
@@ -577,6 +692,10 @@ public class Acciones extends HttpServlet {
 		}
 		infoGrupos(request);
 	}
+	
+	/**
+	 * Para borrar clase solo se manda la lista de idCurso filtrado en la vista
+	 * **/
 	private void borrarClase(HttpServletRequest request) {
 		String[] idClaseAsociada;
 		Clase clase;
@@ -591,6 +710,10 @@ public class Acciones extends HttpServlet {
 		}
 		infoGrupos(request);
 	}
+	
+	/**
+	 * Carga los grupos de la escuel que este en el contexto de la aplicación
+	 * **/
 	private void infoGrupos(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Escuela escuelaUtil;
@@ -611,6 +734,10 @@ public class Acciones extends HttpServlet {
 		todosLosGrupos = escuelaDB.getGrupos();
 		request.setAttribute("todosLosGrupos", todosLosGrupos);
 	}
+	
+	/**
+	 * Carca en el scope de la request los cursos en los que el alumno este inscrito
+	 * **/
 	private void cargaCursosAlumno(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Usuario usuario;
@@ -624,6 +751,11 @@ public class Acciones extends HttpServlet {
 		
 		request.setAttribute("cursos", cursos);
 	}
+	
+	/**
+	 * Carga el nombre de los archivos por materia que haya seleccionado el alumno.
+	 * Desde la vista puede filtrarlos para que solo muestre los archivos de su profesor inscrito.
+	 * **/
 	private void cargaArchivosPorMateriaProfesor(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Integer idMateria,idProfesor;
@@ -655,6 +787,12 @@ public class Acciones extends HttpServlet {
 		
 		request.setAttribute("archivos", archivos);
 	}
+	
+	/**
+	 * Para descargar los archivos, la vista manda el id del archivo a descargar.
+	 * Se busca el nombre en la tabla de archivos y se construye la ruta donde
+	 * esta alojado y se crea un archvio ZIP para descargar todos los archivos seleccionados
+	 * **/
 	private String descargarDocumentos(HttpServletRequest request) throws IOException, URISyntaxException {
 		HttpSession session = request.getSession();
 		Archivo archivoDB;
@@ -675,19 +813,23 @@ public class Acciones extends HttpServlet {
 		
 		nombreZIP = "RepoEscolar-" + escuelaUtil.getReferencia() + "-" + usuario.getIdUsuario();
 		
+		URI uri;
+		String stringuri;
 		pathDirectory = "repositorio/descargas/" + nombreZIP + ".zip";
-		
-		URI uri = URI.create("jar:file://" + contexto + "/" + pathDirectory);
+		File file = new File(contexto + "/" + pathDirectory);
+		stringuri = "jar:" + file.toURI().toString();
+		uri = URI.create(stringuri);
 
 		try (FileSystem zipfs = FileSystems.newFileSystem(uri, env)) {
-			for (String archivo : archivoSelect) {
-				archivoDB = archivoBs.searchById(Integer.parseInt(archivo));
-				archivos.add(archivoDB);
-				Path externalTxtFile = Paths.get(contexto + "/repositorio/" + escuelaUtil.getReferencia() + "/" + archivoDB.getNombre());
-			    Path pathInZipfile = zipfs.getPath("/" + archivoDB.getNombre());          
-			    // copy a file into the zip file
-			    Files.copy(externalTxtFile, pathInZipfile, StandardCopyOption.REPLACE_EXISTING);
-			}
+                    Path externalTxtFile,pathInZipfile;
+                    for (String archivo : archivoSelect) {
+                    	archivoDB = archivoBs.searchById(Integer.parseInt(archivo));
+        				archivos.add(archivoDB);
+                    	externalTxtFile = Paths.get(contexto + "/repositorio/" + escuelaUtil.getReferencia() + "/" + archivoDB.getNombre());
+    				    pathInZipfile = zipfs.getPath("/" + archivoDB.getNombre()); 
+                        // copy a file into the zip file
+                        Files.copy(externalTxtFile, pathInZipfile, StandardCopyOption.REPLACE_EXISTING);
+                    }
 		}
 		
 		uri = new URI(pathDirectory);
@@ -696,6 +838,10 @@ public class Acciones extends HttpServlet {
 		request.setAttribute("zipFile", uri);
 		return "descargarArchivos.jsp";
 	}
+	
+	/**
+	 * Se borran los archivos por id del archivo y con el nombre también se borra del repositorio.
+	 * **/
 	private void borrarArchivo(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		File file;
@@ -710,12 +856,19 @@ public class Acciones extends HttpServlet {
 		
 		for (String archivo : archivoSelect) {
 			archivoDB = archivoBs.searchById(Integer.parseInt(archivo));
-			file = new File(contexto + "/repositorio/" + escuelaUtil.getReferencia() + "/" + archivoDB.getNombre());
+			if (SISTEMA)
+				file = new File(contexto + "/repositorio/" + escuelaUtil.getReferencia() + "/" + archivoDB.getNombre());
+			else
+				file = new File(contexto + "\\repositorio\\" + escuelaUtil.getReferencia() + "\\" + archivoDB.getNombre());
 			file.delete();
 			archivoBs.delete(archivoDB);
 		}
 		infoParaCargarContenido(request);
 	}
+	
+	/**
+	 * Para crear cursos se requiere la materia, los profesores que la darán y el grupo en el que darán la materia.
+	 * **/
 	private void crearCursos(HttpServletRequest request) {
 		Integer idMateria,tmp1,tmp2,counter;
 		Boolean flag;
@@ -755,6 +908,10 @@ public class Acciones extends HttpServlet {
 		}
 		infoGestionaMateria(request);
 	}
+	
+	/**
+	 * Para borrar cursos se obtiene de la vista la lista de los idCurso y se busca en la base de datos para borrarlos.
+	 * **/
 	private void borrarCurso(HttpServletRequest request) {
 		String[] idProfesores;
 		Integer idProfesor,idMateria;
@@ -776,6 +933,16 @@ public class Acciones extends HttpServlet {
 		
 		infoGestionaMateria(request);
 	}
+	
+	/**
+	 * Carga informción de
+	 * - Todos los grupos de la escuela
+	 * - Las academias
+	 * - Los profesores
+	 * 
+	 * Toda la información es consultada a partir de la escuela en la que se encuentre un usuario
+	 * Se manda la información al scope de la request
+	 * **/
 	private void infoGestionaMateria(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Usuario usuario;
@@ -800,6 +967,10 @@ public class Acciones extends HttpServlet {
 		request.setAttribute("academia", academia);
 		request.setAttribute("profesores", profesores);
 	}
+	
+	/**
+	 * Carga información del profesor, para que en la vista despliegue cuále son sus archivos
+	 * **/
 	private void infoParaCargarContenido(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Usuario usuario;
@@ -810,6 +981,12 @@ public class Acciones extends HttpServlet {
 		
 		request.setAttribute("profesor", profesor);
 	}
+	/**
+	 * Para cargar documentos se traen de la vista los archivos casteados a items
+	 * 
+	 * A cada archivo se le asigna una ruta conformada por el contex path y la ruta del repositorio local
+	 * Con la ruta se carga cada uno de los archivos y se agregan al profesor que lo esta subiendo
+	 * **/
 	private void cargaDocumentos(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		StringCodificador codificador = new StringCodificador();
@@ -834,7 +1011,10 @@ public class Acciones extends HttpServlet {
             File file;
             
             partes = upload.parseRequest(request);
-            path = contexto + "/repositorio/" + escuelaUtil.getReferencia();
+            if (SISTEMA)
+            	path = contexto + "/repositorio/" + escuelaUtil.getReferencia();
+            else
+            	path = contexto + "\\repositorio\\" + escuelaUtil.getReferencia();
             file = new File(path);
             if (!file.exists()) {
                 file.mkdirs();
@@ -865,6 +1045,10 @@ public class Acciones extends HttpServlet {
 			infoParaCargarContenido(request);
 		}
 	}
+	
+	/**
+	 * Carga las academias dependiendo de la escuela de la sesión
+	 * **/
 	private void cargdaAcademiasMaterias(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		List<Academia> academias;
@@ -875,6 +1059,15 @@ public class Acciones extends HttpServlet {
 		
 		request.setAttribute("academias", academias);
 	}
+	
+	/**
+	 * Remueve del scope de sesión los objetos:
+	 * - Usuario
+	 * - Perfil
+	 * - Escuela
+	 * 
+	 * Que se encargan de modificar el perfil de la vista
+	 * **/
 	private String cerrarSesion(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		
@@ -884,6 +1077,23 @@ public class Acciones extends HttpServlet {
 		
 		return "Acciones?accion=1&direccion=index.jsp";
 	}
+	
+	/**
+	 * Para registrar usuario, se verifica el campo de rol para ver si será registrado como profesor o administrador
+	 * 
+	 * Cuando es un usaurio tipo Administrativo o Profesor, verifica que la clave de acceso sea correcta,
+	 * consultando a la base de datos la clave de la escuela y comparando.
+	 * 
+	 * Cuando es un usuario tipo alumno, el campo rol no esta lleno y pasa a la verificación del previo registro de la boleta
+	 * Para ello compara contra los alumnos dados de alta, pero no asignados a un usuario.
+	 * - Si existe el alumno crea a la persona y el usuario y despues lo asigna
+	 * - Si no existe manda un mensaje de error para que consulte al administrador
+	 * 
+	 * Dentro de cada usuario se carga la imagen que ha subido el usuario o pasa el proceso si no subió foto
+	 * 
+	 * Por último manda la informaicón de la cuenta creada a la vista de respuesta
+	 * 
+	 * **/
 	private void registrarUsuario(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Persona persona;
@@ -909,7 +1119,10 @@ public class Acciones extends HttpServlet {
             
             item = partes.get(0);
             escuelaUtil = (Escuela) session.getAttribute("escuela");
-            path = contexto + "/img/perfil/";
+            if (SISTEMA)
+            	path = contexto + "/img/perfil/";
+            else
+            	path = contexto + "\\img\\perfil\\";
     		
             file = new File(path);
             if (!file.exists()) {
@@ -920,10 +1133,14 @@ public class Acciones extends HttpServlet {
             
             escuelaDB = escuelaBs.searchById(escuelaUtil.getId());
     		
-            if (Integer.parseInt(partes.get(8).getString()) != 0)
-            	cargo = Integer.parseInt(partes.get(8).getString());
-            else if(Integer.parseInt(partes.get(9).getString()) != 0)
-            	cargo = Integer.parseInt(partes.get(9).getString());
+            if (!partes.get(8).getString().equals("") || !partes.get(9).getString().equals("")) {
+                if (Integer.parseInt(partes.get(8).getString()) != 0)
+                	cargo = Integer.parseInt(partes.get(8).getString());
+                else if(Integer.parseInt(partes.get(9).getString()) != 0)
+                	cargo = Integer.parseInt(partes.get(9).getString());
+                else
+                	cargo = 0;
+			}
             else
             	cargo = 0;
             
@@ -1004,10 +1221,10 @@ public class Acciones extends HttpServlet {
 				else
 					mensaje = 2;
             }
-            else {
+            else {//Alumno
         		usuario = usuarioBs.searchByNick(boleta);
         		alumno = alumnoBs.searchByBoleta(boleta);
-        		if (usuario.isNew() && alumno.isNew()) {
+        		if (usuario.isNew() && alumno.isRegistered()) {
         			persona = new Persona();
         			persona.setNombres(codificador.codificar(partes.get(1).getString()));
         			persona.setApellidos(codificador.codificar(partes.get(2).getString()));
@@ -1039,7 +1256,10 @@ public class Acciones extends HttpServlet {
         			mensaje = 1;
         		}
         		else {
-        			mensaje = 2;
+        			if (!alumno.isRegistered())
+						mensaje = 6;
+        			else
+        				mensaje = 2;
         		}
             }
         }catch (Exception e) {
@@ -1049,13 +1269,21 @@ public class Acciones extends HttpServlet {
 		
 		request.setAttribute("mensaje", mensaje);
 	}
+	
+	/**
+	 * Obtiene los datos de la esceula en la que quiere iniciar sesión el usuario, para hacer la busqueda
+	 * de su usuario en dicha escuela.
+	 * 
+	 * Una vez que se ha verificado la existencia del usuario por medio de su númeor de acceso y clave de acceso
+	 * se consulta el tipo de usuario que es para cargar los datos del perfil en el scope de sesión.
+	 * **/
 	private void iniciarSesion(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession();
 		Archivos archivo = new Archivos();
 		PerfilUsuario perfil = new PerfilUsuario();
 		Usuario usuario;
 		Persona persona;
-		String contexto,password,nick;
+		String contexto,password,nick,rutaPerfil;
 		Integer passHash;
 		
 		contexto = (String) session.getAttribute("contexto");
@@ -1092,8 +1320,12 @@ public class Acciones extends HttpServlet {
 			}
 			persona = personaBs.searchById(usuario.getPersona().getIdPersona());
 			perfil.setNombre(persona.getNombres());
-			if (archivo.existeArchivo("perfil/" + persona.getIdPersona() + ".png"))
-				perfil.setAvatar(archivo.obtenerImagenCodificada("perfil/", persona.getIdPersona() + ".png"));
+			if (SISTEMA)
+				rutaPerfil = "perfil/";
+			else
+				rutaPerfil = "perfil\\";
+			if (archivo.existeArchivo(rutaPerfil + persona.getIdPersona() + ".png"))
+				perfil.setAvatar(archivo.obtenerImagenCodificada(rutaPerfil, persona.getIdPersona() + ".png"));
 			session.setAttribute("usuario", usuario);
 			session.setAttribute("perfil", perfil);
 		}
@@ -1105,12 +1337,15 @@ public class Acciones extends HttpServlet {
 		}
 	}
 	
+	/**
+	 * Carga el perfil de la escuela que el usuario selecció y lo sube al scope de sesión.
+	 * **/
 	private void cargarSesionEscuela(HttpServletRequest request) throws IOException {
 		HttpSession session = request.getSession();
 		Archivos archivo = new Archivos();
 		Escuela escuelaUtil = new Escuela();
 		mx.ipn.escom.repoescolar.accesoDB.mapeo.Escuela escuelaDB;
-		String contexto;
+		String contexto,rutaEscuela,sistemaDir;
 		Integer idEscuela;
 		
 		contexto = (String) session.getAttribute("contexto");
@@ -1119,8 +1354,17 @@ public class Acciones extends HttpServlet {
 		
 		escuelaDB = escuelaBs.searchById(idEscuela);
 		
-		if (archivo.existeArchivo("escuelas/" + escuelaDB.getReferencia() + "/" + escuelaDB.getReferencia() + ".png"))
-			escuelaUtil.setEscudo(archivo.obtenerImagenCodificada("escuelas/" + escuelaDB.getReferencia(), escuelaDB.getReferencia() + ".png"));
+		if (SISTEMA) {
+			rutaEscuela = "escuelas/";
+			sistemaDir = "/";
+		}
+		else {
+			rutaEscuela = "escuelas\\";
+			sistemaDir = "\\";
+		}
+		
+		if (archivo.existeArchivo(rutaEscuela + escuelaDB.getReferencia() + sistemaDir + escuelaDB.getReferencia() + ".png"))
+			escuelaUtil.setEscudo(archivo.obtenerImagenCodificada(rutaEscuela + escuelaDB.getReferencia(), escuelaDB.getReferencia() + ".png"));
 		escuelaUtil.setId(idEscuela);
 		escuelaUtil.setNombre(escuelaDB.getNombre());
 		escuelaUtil.setReferencia(escuelaDB.getReferencia());
@@ -1129,13 +1373,17 @@ public class Acciones extends HttpServlet {
 		session.setAttribute("escuela", escuelaUtil);
 	}
 	
+	/**
+	 * Consulta todas las escuelas registradas para cargar los perfiles en la vista y que el usuario
+	 * pueda eleguir en cual registrarse o iniciar sesión
+	 * **/
 	private void cargarEscuelas(HttpServletRequest request) throws IOException {
 		HttpSession session = request.getSession();
 		Archivos archivo = new Archivos();
 		List<mx.ipn.escom.repoescolar.accesoDB.mapeo.Escuela> escuelas;
 		List<Escuela> escuelasUtil;
 		escuelasUtil = new ArrayList<Escuela>();
-		String contexto,escudo;
+		String contexto,escudo,escuelaDir;
 		
 		contexto = this.getServletConfig().getServletContext().getRealPath("/");
 		
@@ -1144,8 +1392,13 @@ public class Acciones extends HttpServlet {
 		archivo.setContexto(contexto);
 		Escuela escuelaUtil;
 		
+		if (SISTEMA)
+			escuelaDir = "/escuelas/";
+		else
+			escuelaDir = "\\escuelas\\";
+		
 		for (mx.ipn.escom.repoescolar.accesoDB.mapeo.Escuela escuela : escuelas) {
-			escudo = archivo.obtenerImagenCodificada("/escuelas/" + escuela.getReferencia(), escuela.getReferencia() + ".png");
+			escudo = archivo.obtenerImagenCodificada(escuelaDir + escuela.getReferencia(), escuela.getReferencia() + ".png");
 			escuelaUtil = new Escuela();
 			escuelaUtil.setEscudo(escudo);
 			escuelaUtil.setNombre(escuela.getNombre());
